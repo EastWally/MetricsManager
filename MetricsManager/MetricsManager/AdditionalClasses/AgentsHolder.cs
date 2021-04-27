@@ -5,13 +5,13 @@ using System.Threading.Tasks;
 
 namespace MetricsManager
 {
-    public class ValuesHolder
+    public class AgentsHolder
     {
-        public List<Weather> Values;
+        public List<AgentInfo> Agents;
 
-        public ValuesHolder()
+        public AgentsHolder()
         {
-            Values = new List<Weather>();
+            Agents = new List<AgentInfo>();
         }
     }
 }
