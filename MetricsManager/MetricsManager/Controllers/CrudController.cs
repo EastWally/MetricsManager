@@ -41,10 +41,10 @@ namespace MetricsManager.Controllers
         [HttpPut("update")]
         public IActionResult Update([FromQuery] DateTime date, [FromQuery] int newValue)
         {
-            for (int i = 0; i < _holder.Values.Count; i++)
+            foreach(var holder in _holder.Values)
             {
-                if (_holder.Values[i].Date == date)
-                    _holder.Values[i].Temperature = newValue;
+                if (holder.Date == date)
+                    holder.Temperature = newValue;
             }
             return Ok();
         }
