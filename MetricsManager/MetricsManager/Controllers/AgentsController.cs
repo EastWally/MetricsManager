@@ -18,7 +18,6 @@ namespace MetricsManager.Controllers
             _holder = holder;
         }
 
-
         [HttpPost("register")]
         public IActionResult RegisterAgent([FromBody] AgentInfo agentInfo)
         {
@@ -26,20 +25,17 @@ namespace MetricsManager.Controllers
             return Ok();
         }
 
-
         [HttpPut("enable/{agentId}")]
         public IActionResult EnableAgentById([FromRoute] int agentId)
         {
             return Ok();
         }
 
-
         [HttpPut("disable/{agentId}")]
         public IActionResult DisableAgentById([FromRoute] int agentId)
         {
             return Ok();
         }
-
 
         [HttpGet("get")]
         public IActionResult GetRegisteredAgents()
