@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using MetricsAgent.DAL;
 
 namespace MetricsAgent.DAL.Interfaces
 {
     public interface IRepository<T> where T : class
     {
-        IList<T> GetByPeriod(DateTimeOffset fromTime, DateTimeOffset toTime);
+        IList<T> GetByPeriod(PeriodArgs args);
 
         void Create(T item);
     }

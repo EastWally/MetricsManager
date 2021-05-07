@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using MetricsAgent.DAL.Interfaces;
 using MetricsAgent.DAL.Models;
+using MetricsAgent.DAL;
 
 namespace MetricsAgent.Controllers.HddMetricsController
 {
@@ -27,7 +28,7 @@ namespace MetricsAgent.Controllers.HddMetricsController
         {
             _logger.LogInformation("HddController FromTime:{0} ToTime {1}", fromTime, toTime);
 
-            var metrics = _repository.GetByPeriod(fromTime, toTime);
+            var metrics = _repository.GetByPeriod(new PeriodArgs() { FromTime = fromTime, ToTime = toTime });
             var response = new ByPeriodHddMetricResponse()
             {
                 Metrics = new List<HddMetricDto>()

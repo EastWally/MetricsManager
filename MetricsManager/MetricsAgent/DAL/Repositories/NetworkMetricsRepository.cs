@@ -27,14 +27,14 @@ namespace MetricsAgent.DAL.Repositories
             cmd.ExecuteNonQuery();
         }
 
-        public IList<NetworkMetric> GetByPeriod(DateTimeOffset fromTime, DateTimeOffset toTime)
+        public IList<NetworkMetric> GetByPeriod(PeriodArgs args)
         {
             using var connection = new SQLiteConnection(_connectionString);
             connection.Open();
             using var cmd = new SQLiteCommand(connection);
-            cmd.CommandText = "SELECT * FROM networkmetrics WHERE time>=@fromTime AND time<=@toTime";
-            cmd.Parameters.AddWithValue("@fromTime", fromTime.ToUnixTimeSeconds());
-            cmd.Parameters.AddWithValue("@toTime", toTime.ToUnixTimeSeconds());
+            cmd.CommandText = "SELECT * FROM networkmetrics WHERE time BETWEEN @fromTime AND @toTime";
+            cmd.Parameters.AddWithValue("@fromTime", args.FromTime.ToUnixTimeSeconds());
+            cmd.Parameters.AddWithValue("@toTime", args.ToTime.ToUnixTimeSeconds());
             cmd.Prepare();
             var returnList = new List<NetworkMetric>();
             using (SQLiteDataReader reader = cmd.ExecuteReader())

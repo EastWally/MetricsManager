@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using MetricsAgent.DAL.Interfaces;
 using MetricsAgent.DAL.Models;
+using MetricsAgent.DAL;
 
 namespace MetricsAgent.Controllers.NetworkMetricsController
 {
@@ -26,7 +27,7 @@ namespace MetricsAgent.Controllers.NetworkMetricsController
         {
             _logger.LogInformation("NetworkController FromTime:{0} ToTime {1}", fromTime, toTime);
 
-            var metrics = _repository.GetByPeriod(fromTime, toTime);
+            var metrics = _repository.GetByPeriod(new PeriodArgs() { FromTime = fromTime, ToTime = toTime });
             var response = new ByPeriodNetworkMetricResponse()
             {
                 Metrics = new List<NetworkMetricDto>()

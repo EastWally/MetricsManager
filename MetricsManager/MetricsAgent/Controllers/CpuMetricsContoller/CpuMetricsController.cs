@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using MetricsAgent.DAL.Interfaces;
 using MetricsAgent.DAL.Models;
+using MetricsAgent.DAL;
 
 namespace MetricsAgent.Controllers.CpuMetricsContoller
 {
@@ -27,12 +28,12 @@ namespace MetricsAgent.Controllers.CpuMetricsContoller
         {
             _logger.LogInformation("CpuController FromTime:{0} ToTime {1}", fromTime, toTime);
 
-            var metrics = _repository.GetByPeriod(fromTime, toTime);
             var response = new ByPeriodCpuMetricResponse()
             {
                 Metrics = new List<CpuMetricDto>()
             };
 
+            var metrics = _repository.GetByPeriod(new PeriodArgs() { FromTime = fromTime, ToTime = toTime});
             foreach (var metric in metrics)
             {
                 response.Metrics.Add(new CpuMetricDto { Time = DateTimeOffset.FromUnixTimeSeconds(metric.Time), Value = metric.Value });

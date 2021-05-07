@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
+using MetricsAgent.DAL;
 using MetricsAgent.DAL.Models;
 using MetricsAgent.DAL.Interfaces;
 
@@ -27,14 +28,14 @@ namespace MetricsAgent.DAL.Repositories
             cmd.ExecuteNonQuery();
         }
 
-        public IList<CpuMetric> GetByPeriod(DateTimeOffset fromTime, DateTimeOffset toTime)
+        public IList<CpuMetric> GetByPeriod(PeriodArgs args)
         {
             using var connection = new SQLiteConnection(_connectionString);
             connection.Open();
             using var cmd = new SQLiteCommand(connection);
-            cmd.CommandText = "SELECT * FROM cpumetrics WHERE time>=@fromTime AND time<=@toTime";
-            cmd.Parameters.AddWithValue("@fromTime", fromTime.ToUnixTimeSeconds());
-            cmd.Parameters.AddWithValue("@toTime", toTime.ToUnixTimeSeconds());
+            cmd.CommandText = "SELECT * FROM cpumetrics WHERE time BETWEEN @fromTime AND @toTime";
+            cmd.Parameters.AddWithValue("@fromTime", args.FromTime.ToUnixTimeSeconds());
+            cmd.Parameters.AddWithValue("@toTime", args.ToTime.ToUnixTimeSeconds());
             cmd.Prepare();
             var returnList = new List<CpuMetric>();
             using (SQLiteDataReader reader = cmd.ExecuteReader())

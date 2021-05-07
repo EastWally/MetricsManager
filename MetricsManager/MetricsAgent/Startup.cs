@@ -63,7 +63,7 @@ namespace MetricsAgent
             command.CommandText = $"DROP TABLE IF EXISTS {tableName}";
             command.ExecuteNonQuery();
 
-            command.CommandText = $"CREATE TABLE {tableName}(id INTEGER PRIMARY KEY, value INT, time INT)";
+            command.CommandText = $"CREATE TABLE {tableName}(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, value INT, time INT)";
             command.ExecuteNonQuery();
 
             command.CommandText = $"INSERT INTO {tableName}(value, time) VALUES({value++},{DateTimeOffset.Now.AddDays(-3).ToUnixTimeSeconds()})";
