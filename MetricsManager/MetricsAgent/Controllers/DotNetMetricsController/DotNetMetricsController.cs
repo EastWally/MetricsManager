@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using MetricsAgent.DAL.Interfaces;
 using MetricsAgent.DAL.Models;
 using MetricsAgent.DAL;
+using AutoMapper;
 
 namespace MetricsAgent.Controllers.DotNetMetricsController
 {
@@ -15,28 +16,26 @@ namespace MetricsAgent.Controllers.DotNetMetricsController
     public class DotNetMetricsController : ControllerBase
     {
         private readonly ILogger<DotNetMetricsController> _logger;
-        private IDotNetMetricsRepository _repository;
+        private readonly IDotNetMetricsRepository _repository;
+        private readonly IMapper _mapper;
 
-        public DotNetMetricsController(ILogger<DotNetMetricsController> logger, IDotNetMetricsRepository repository)
+        public DotNetMetricsController(ILogger<DotNetMetricsController> logger, IDotNetMetricsRepository repository, IMapper mapper)
         {
             _logger = logger;
             _repository = repository;
+            _mapper = mapper;
         }
 
         [HttpGet("errors-count/from/{fromTime}/to/{toTime}")]
         public IActionResult GetErrorsCount([FromRoute] DateTimeOffset fromTime, [FromRoute] DateTimeOffset toTime)
         {
             _logger.LogInformation("DotNetController FromTime:{0} ToTime {1}", fromTime, toTime);
+
             var metrics = _repository.GetByPeriod(new PeriodArgs() { FromTime = fromTime, ToTime = toTime });
             var response = new ByPeriodDotNetMetricResponse()
             {
-                Metrics = new List<DotNetMetricDto>()
+                Metrics = _mapper.Map<IEnumerable<DotNetMetric>, List<DotNetMetricDto>>((IEnumerable<DotNetMetric>)metrics)
             };
-
-            foreach (var metric in metrics)
-            {
-                response.Metrics.Add(new DotNetMetricDto { Time = DateTimeOffset.FromUnixTimeSeconds(metric.Time), Value = metric.Value });
-            }
 
             return Ok(response);
         }
@@ -44,12 +43,7 @@ namespace MetricsAgent.Controllers.DotNetMetricsController
         [HttpPost("create")]
         public IActionResult Create([FromBody] DotNetMetricCreateRequest request)
         {
-            _repository.Create(new DotNetMetric
-            {
-                Time = request.Time.ToUnixTimeSeconds(),
-                Value = request.Value
-            });
-
+            _repository.Create(_mapper.Map<DotNetMetric>(request));
             return Ok();
         }
     }

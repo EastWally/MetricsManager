@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using MetricsAgent.DAL.Interfaces;
 using MetricsAgent.DAL.Models;
 using MetricsAgent.DAL;
+using AutoMapper;
 
 namespace MetricsAgent.Controllers.RamMetricsController
 {
@@ -15,11 +16,13 @@ namespace MetricsAgent.Controllers.RamMetricsController
     public class RamMetricsController : ControllerBase
     {
         private readonly ILogger<RamMetricsController> _logger;
-        private IRamMetricsRepository _repository;
-        public RamMetricsController(ILogger<RamMetricsController> logger, IRamMetricsRepository repository)
+        private readonly IRamMetricsRepository _repository;
+        private readonly IMapper _mapper;
+        public RamMetricsController(ILogger<RamMetricsController> logger, IRamMetricsRepository repository, IMapper mapper)
         {
             _logger = logger;
             _repository = repository;
+            _mapper = mapper;
         }
 
         [HttpGet("available/from/{fromTime}/to/{toTime}")]
@@ -28,15 +31,11 @@ namespace MetricsAgent.Controllers.RamMetricsController
             _logger.LogInformation("RamController FromTime:{0} ToTime {1}", fromTime, toTime);
 
             var metrics = _repository.GetByPeriod(new PeriodArgs() { FromTime = fromTime, ToTime = toTime });
+
             var response = new ByPeriodRamMetricResponse()
             {
-                Metrics = new List<RamMetricDto>()
+                Metrics = _mapper.Map<IEnumerable<RamMetric>, List<RamMetricDto>>((IEnumerable<RamMetric>)metrics)
             };
-
-            foreach (var metric in metrics)
-            {
-                response.Metrics.Add(new RamMetricDto { Time = DateTimeOffset.FromUnixTimeSeconds(metric.Time), Value = metric.Value });
-            }
 
             return Ok(response);
         }
@@ -44,11 +43,7 @@ namespace MetricsAgent.Controllers.RamMetricsController
         [HttpPost("create")]
         public IActionResult Create([FromBody] RamMetricCreateRequest request)
         {
-            _repository.Create(new RamMetric
-            {
-                Time = request.Time.ToUnixTimeSeconds(),
-                Value = request.Value
-            });
+            _repository.Create(_mapper.Map<RamMetric>(request));
 
             return Ok();
         }

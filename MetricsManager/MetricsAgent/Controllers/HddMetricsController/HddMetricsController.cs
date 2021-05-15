@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using MetricsAgent.DAL.Interfaces;
 using MetricsAgent.DAL.Models;
 using MetricsAgent.DAL;
+using AutoMapper;
 
 namespace MetricsAgent.Controllers.HddMetricsController
 {
@@ -15,12 +16,14 @@ namespace MetricsAgent.Controllers.HddMetricsController
     public class HddMetricsController : ControllerBase
     {
         private readonly ILogger<HddMetricsController> _logger;
-        private IHddMetricsRepository _repository;
+        private readonly IHddMetricsRepository _repository;
+        private readonly IMapper _mapper;
 
-        public HddMetricsController(ILogger<HddMetricsController> logger, IHddMetricsRepository repository)
+        public HddMetricsController(ILogger<HddMetricsController> logger, IHddMetricsRepository repository, IMapper mapper)
         {
             _logger = logger;
             _repository = repository;
+            _mapper = mapper;
         }
 
         [HttpGet("left/from/{fromTime}/to/{toTime}")]
@@ -29,15 +32,11 @@ namespace MetricsAgent.Controllers.HddMetricsController
             _logger.LogInformation("HddController FromTime:{0} ToTime {1}", fromTime, toTime);
 
             var metrics = _repository.GetByPeriod(new PeriodArgs() { FromTime = fromTime, ToTime = toTime });
+
             var response = new ByPeriodHddMetricResponse()
             {
-                Metrics = new List<HddMetricDto>()
+                Metrics = _mapper.Map<IEnumerable<HddMetric>, List<HddMetricDto>>((IEnumerable<HddMetric>)metrics)
             };
-
-            foreach (var metric in metrics)
-            {
-                response.Metrics.Add(new HddMetricDto { Time = DateTimeOffset.FromUnixTimeSeconds(metric.Time), Value = metric.Value });
-            }
 
             return Ok(response);
         }
@@ -45,11 +44,7 @@ namespace MetricsAgent.Controllers.HddMetricsController
         [HttpPost("create")]
         public IActionResult Create([FromBody] HddMetricCreateRequest request)
         {
-            _repository.Create(new HddMetric
-            {
-                Time = request.Time.ToUnixTimeSeconds(),
-                Value = request.Value
-            });
+            _repository.Create(_mapper.Map<HddMetric>(request));
 
             return Ok();
         }

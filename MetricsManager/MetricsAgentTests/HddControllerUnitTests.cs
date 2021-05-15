@@ -8,6 +8,8 @@ using System;
 using Xunit;
 using System.Collections.Generic;
 using MetricsAgent.DAL;
+using MetricsAgent;
+using AutoMapper;
 
 namespace MetricsAgentTests
 {
@@ -16,13 +18,24 @@ namespace MetricsAgentTests
         private HddMetricsController controller;
         private Mock<ILogger<HddMetricsController>> mockLogger;
         private Mock<IHddMetricsRepository> mockRepository;
+        private static IMapper _mapper;
 
         public HddControllerUnitTests()
         {
             mockRepository = new Mock<IHddMetricsRepository>();
             mockLogger = new Mock<ILogger<HddMetricsController>>();
 
-            controller = new HddMetricsController(mockLogger.Object, mockRepository.Object);
+            if (_mapper == null)
+            {
+                var mappingConfig = new MapperConfiguration(mc =>
+                {
+                    mc.AddProfile(new MapperProfile());
+                });
+                IMapper mapper = mappingConfig.CreateMapper();
+                _mapper = mapper;
+            }
+
+            controller = new HddMetricsController(mockLogger.Object, mockRepository.Object, _mapper);
         }
 
         [Fact]

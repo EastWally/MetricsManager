@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Data.SQLite;
 using MetricsAgent.DAL.Models;
 using MetricsAgent.DAL.Interfaces;
+using Dapper;
+using System.Linq;
 
 namespace MetricsAgent.DAL.Repositories
 {
@@ -17,38 +19,28 @@ namespace MetricsAgent.DAL.Repositories
 
         public void Create(HddMetric item)
         {
-            using var connection = new SQLiteConnection(_connectionString);
-            connection.Open();
-            using var cmd = new SQLiteCommand(connection);
-            cmd.CommandText = "INSERT INTO hddmetrics(value, time) VALUES(@value, @time)";
-            cmd.Parameters.AddWithValue("@value", item.Value);
-            cmd.Parameters.AddWithValue("@time", item.Time);
-            cmd.Prepare();
-            cmd.ExecuteNonQuery();
+            using (var connection = new SQLiteConnection(_connectionString))
+            {
+                connection.Execute("INSERT INTO hddmetrics(value, time) VALUES(@value, @time)",
+                    new
+                    {
+                        value = item.Value,
+                        time = item.Time
+                    });
+            }
         }
 
         public IList<HddMetric> GetByPeriod(PeriodArgs args)
         {
-            using var connection = new SQLiteConnection(_connectionString);
-            connection.Open();
-            using var cmd = new SQLiteCommand(connection);
-            cmd.CommandText = "SELECT * FROM hddmetrics WHERE time BETWEEN @fromTime AND @toTime";
-            cmd.Parameters.AddWithValue("@fromTime", args.FromTime.ToUnixTimeSeconds());
-            cmd.Parameters.AddWithValue("@toTime", args.ToTime.ToUnixTimeSeconds());
-            cmd.Prepare();
-            var returnList = new List<HddMetric>();
-            using (SQLiteDataReader reader = cmd.ExecuteReader())
+            using (var connection = new SQLiteConnection(_connectionString))
             {
-                while (reader.Read())
-                {
-                    returnList.Add(new HddMetric
+                return connection.Query<HddMetric>("SELECT * FROM hddmetrics WHERE time BETWEEN @fromTime AND @toTime",
+                    new
                     {
-                        Value = reader.GetInt32(1),
-                        Time = reader.GetInt64(2)
-                    });
-                }
+                        fromTime = args.FromTime.ToUnixTimeSeconds(),
+                        toTime = args.ToTime.ToUnixTimeSeconds()
+                    }).ToList();
             }
-            return returnList;
         }
     }
 

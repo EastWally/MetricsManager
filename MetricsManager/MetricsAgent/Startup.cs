@@ -13,6 +13,7 @@ using MetricsAgent.DAL;
 using System.Data.SQLite;
 using MetricsAgent.DAL.Interfaces;
 using MetricsAgent.DAL.Repositories;
+using AutoMapper;
 
 namespace MetricsAgent
 {
@@ -29,8 +30,14 @@ namespace MetricsAgent
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            var mapperConfiguration = new MapperConfiguration(mp => mp.AddProfile(new MapperProfile()));
+            var mapper = mapperConfiguration.CreateMapper();
+            services.AddSingleton(mapper);
+
             ConfigureSqlLiteConnection(services, new DBConfig());
             services.AddSingleton<IDBConfig, DBConfig>();
+
             services.AddSingleton<ICpuMetricsRepository, CpuMetricsRepository>();
             services.AddSingleton<IDotNetMetricsRepository, DotNetMetricsRepository>();
             services.AddSingleton<IHddMetricsRepository, HddMetricsRepository>();
