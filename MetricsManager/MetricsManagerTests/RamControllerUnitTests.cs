@@ -20,8 +20,8 @@ namespace MetricsManagerTests
         {
             //Arrange
             var agentId = 1;
-            var fromTime = TimeSpan.FromSeconds(0);
-            var toTime = TimeSpan.FromSeconds(100);
+            var fromTime = DateTimeOffset.Now.AddDays(-4);
+            var toTime = DateTimeOffset.Now;
 
             //Act
             var result = controller.GetMetricsFromAgent(agentId, fromTime, toTime);
@@ -30,49 +30,15 @@ namespace MetricsManagerTests
             _ = Assert.IsAssignableFrom<IActionResult>(result);
         }
 
-
-        [Fact]
-        public void GetMetricsByPercentileFromAgent_ReturnOk()
-        {
-            //Arrange
-            var agentId = 1;
-            var fromTime = TimeSpan.FromSeconds(0);
-            var toTime = TimeSpan.FromSeconds(100);
-            var percentile = Percentile.P75;
-
-            //Act
-            var result = controller.GetMetricsByPercentileFromAgent(agentId, fromTime, toTime, percentile);
-
-            //Assert
-            _ = Assert.IsAssignableFrom<IActionResult>(result);
-        }
-
-
         [Fact]
         public void GetMetricsAllCluster_ReturnOk()
         {
             //Arrange
-            var fromTime = TimeSpan.FromSeconds(0);
-            var toTime = TimeSpan.FromSeconds(100);
+            var fromTime = DateTimeOffset.Now.AddDays(-4);
+            var toTime = DateTimeOffset.Now;
 
             //Act
             var result = controller.GetMetricsAllCluster(fromTime, toTime);
-
-            //Assert
-            _ = Assert.IsAssignableFrom<IActionResult>(result);
-        }
-
-
-        [Fact]
-        public void GetMetricsByPercentileFromAllCluster_ReturnOk()
-        {
-            //Arrange
-            var fromTime = TimeSpan.FromSeconds(0);
-            var toTime = TimeSpan.FromSeconds(100);
-            var percentile = Percentile.P75;
-
-            //Act
-            var result = controller.GetMetricsByPercentileFromAllCluster(fromTime, toTime, percentile);
 
             //Assert
             _ = Assert.IsAssignableFrom<IActionResult>(result);
