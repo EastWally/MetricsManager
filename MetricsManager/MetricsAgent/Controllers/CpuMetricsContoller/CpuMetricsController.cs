@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using MetricsAgent.DAL.Interfaces;
 using MetricsAgent.DAL.Models;
 using MetricsAgent.DAL;
+using AutoMapper;
 
 namespace MetricsAgent.Controllers.CpuMetricsContoller
 {
@@ -15,12 +16,14 @@ namespace MetricsAgent.Controllers.CpuMetricsContoller
     public class CpuMetricsController : ControllerBase
     {
         private readonly ILogger<CpuMetricsController> _logger;
-        private ICpuMetricsRepository _repository;
+        private readonly ICpuMetricsRepository _repository;
+        private readonly IMapper _mapper;
 
-        public CpuMetricsController(ILogger<CpuMetricsController> logger, ICpuMetricsRepository repository)
+        public CpuMetricsController(ILogger<CpuMetricsController> logger, ICpuMetricsRepository repository, IMapper mapper)
         {
             _logger = logger;
             _repository = repository;
+            _mapper = mapper;
         }
 
         [HttpGet("from/{fromTime}/to/{toTime}")]
@@ -28,16 +31,12 @@ namespace MetricsAgent.Controllers.CpuMetricsContoller
         {
             _logger.LogInformation("CpuController FromTime:{0} ToTime {1}", fromTime, toTime);
 
+            var metrics = _repository.GetByPeriod(new PeriodArgs() { FromTime = fromTime, ToTime = toTime });
+
             var response = new ByPeriodCpuMetricResponse()
             {
-                Metrics = new List<CpuMetricDto>()
+                Metrics = _mapper.Map<IEnumerable<CpuMetric>, List<CpuMetricDto>>((IEnumerable<CpuMetric>)metrics)
             };
-
-            var metrics = _repository.GetByPeriod(new PeriodArgs() { FromTime = fromTime, ToTime = toTime});
-            foreach (var metric in metrics)
-            {
-                response.Metrics.Add(new CpuMetricDto { Time = DateTimeOffset.FromUnixTimeSeconds(metric.Time), Value = metric.Value });
-            }
 
             return Ok(response);
         }
@@ -45,11 +44,7 @@ namespace MetricsAgent.Controllers.CpuMetricsContoller
         [HttpPost("create")]
         public IActionResult Create([FromBody] CpuMetricCreateRequest request)
         {
-            _repository.Create(new CpuMetric
-            {
-                Time = request.Time.ToUnixTimeSeconds(),
-                Value = request.Value
-            });
+            _repository.Create(_mapper.Map<CpuMetric>(request));
 
             return Ok();
         }

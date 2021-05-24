@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
-using MetricsAgent.DAL;
 using MetricsAgent.DAL.Models;
 using MetricsAgent.DAL.Interfaces;
+using Dapper;
+using System.Linq;
 
 namespace MetricsAgent.DAL.Repositories
 {
@@ -18,38 +19,28 @@ namespace MetricsAgent.DAL.Repositories
 
         public void Create(CpuMetric item)
         {
-            using var connection = new SQLiteConnection(_connectionString);
-            connection.Open();
-            using var cmd = new SQLiteCommand(connection);
-            cmd.CommandText = "INSERT INTO cpumetrics(value, time) VALUES(@value, @time)";
-            cmd.Parameters.AddWithValue("@value", item.Value);
-            cmd.Parameters.AddWithValue("@time", item.Time);
-            cmd.Prepare();
-            cmd.ExecuteNonQuery();
+            using (var connection = new SQLiteConnection(_connectionString))
+            {
+                connection.Execute("INSERT INTO cpumetrics(value, time) VALUES(@value, @time)",                    
+                    new
+                    {
+                        value = item.Value,
+                        time = item.Time
+                    });
+            }
         }
 
         public IList<CpuMetric> GetByPeriod(PeriodArgs args)
         {
-            using var connection = new SQLiteConnection(_connectionString);
-            connection.Open();
-            using var cmd = new SQLiteCommand(connection);
-            cmd.CommandText = "SELECT * FROM cpumetrics WHERE time BETWEEN @fromTime AND @toTime";
-            cmd.Parameters.AddWithValue("@fromTime", args.FromTime.ToUnixTimeSeconds());
-            cmd.Parameters.AddWithValue("@toTime", args.ToTime.ToUnixTimeSeconds());
-            cmd.Prepare();
-            var returnList = new List<CpuMetric>();
-            using (SQLiteDataReader reader = cmd.ExecuteReader())
+            using (var connection = new SQLiteConnection(_connectionString))
             {
-                while (reader.Read())
-                {
-                    returnList.Add(new CpuMetric
-                    {
-                        Value = reader.GetInt32(1),
-                        Time = reader.GetInt64(2)
-                    });
-                }
+                return connection.Query<CpuMetric>("SELECT * FROM cpumetrics WHERE time BETWEEN @fromTime AND @toTime",
+                    new 
+                    { 
+                        fromTime = args.FromTime.ToUnixTimeSeconds(),
+                        toTime = args.ToTime.ToUnixTimeSeconds()
+                    }).ToList();
             }
-            return returnList;
         }
     }
 
