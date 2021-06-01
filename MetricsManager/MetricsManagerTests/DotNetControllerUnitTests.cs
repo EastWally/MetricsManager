@@ -1,18 +1,38 @@
 using MetricsManager.Controllers;
-using MetricsManager.Enum;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using Xunit;
+using Moq;
+using Microsoft.Extensions.Logging;
+using MetricsManager.Controllers.DotNetMetricsController;
+using MetricsManager.DAL.Interfaces;
+using AutoMapper;
+using MetricsManager;
 
 namespace MetricsManagerTests
 {
     public class DotNetControllerUnitTests
     {
-        private DotNetMetricsController controller;
+        private readonly DotNetMetricsController controller;
+        private readonly Mock<ILogger<DotNetMetricsController>> mockLogger;
+        private readonly Mock<IDotNetMetricsRepository> mockRepository;
+        private static IMapper _mapper;
 
         public DotNetControllerUnitTests()
         {
-            controller = new DotNetMetricsController();
+            mockRepository = new Mock<IDotNetMetricsRepository>();
+            mockLogger = new Mock<ILogger<DotNetMetricsController>>();
+
+            if (_mapper == null)
+            {
+                var mappingConfig = new MapperConfiguration(mc =>
+                {
+                    mc.AddProfile(new MapperProfile());
+                });
+                IMapper mapper = mappingConfig.CreateMapper();
+                _mapper = mapper;
+            }
+            controller = new DotNetMetricsController(mockLogger.Object, mockRepository.Object, _mapper);
         }
 
         [Fact]

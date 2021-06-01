@@ -1,18 +1,38 @@
 using MetricsManager.Controllers;
-using MetricsManager.Enum;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using Xunit;
+using Moq;
+using Microsoft.Extensions.Logging;
+using MetricsManager.Controllers.CpuMetricsController;
+using MetricsManager.DAL.Interfaces;
+using AutoMapper;
+using MetricsManager;
 
 namespace MetricsManagerTests
 {
     public class CpuControllerUnitTests
     {
-        private CpuMetricsController controller;
+        private readonly CpuMetricsController controller;
+        private readonly Mock<ILogger<CpuMetricsController>> mockLogger;
+        private readonly Mock<ICpuMetricsRepository> mockRepository;
+        private static IMapper _mapper;
 
         public CpuControllerUnitTests()
         {
-            controller = new CpuMetricsController();
+            mockRepository = new Mock<ICpuMetricsRepository>();
+            mockLogger = new Mock<ILogger<CpuMetricsController>>();
+
+            if (_mapper == null)
+            {
+                var mappingConfig = new MapperConfiguration(mc =>
+                {
+                    mc.AddProfile(new MapperProfile());
+                });
+                IMapper mapper = mappingConfig.CreateMapper();
+                _mapper = mapper;
+            }
+            controller = new CpuMetricsController(mockLogger.Object, mockRepository.Object, _mapper);
         }
 
         [Fact]

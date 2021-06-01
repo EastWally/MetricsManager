@@ -1,18 +1,37 @@
-using MetricsManager.Controllers;
-using MetricsManager.Enum;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using Xunit;
+using Moq;
+using Microsoft.Extensions.Logging;
+using MetricsManager.Controllers.RamMetricsController;
+using MetricsManager.DAL.Interfaces;
+using AutoMapper;
+using MetricsManager;
 
 namespace MetricsManagerTests
 {
     public class RamControllerUnitTests
     {
-        private RamMetricsController controller;
+        private readonly RamMetricsController controller;
+        private readonly Mock<ILogger<RamMetricsController>> mockLogger;
+        private readonly Mock<IRamMetricsRepository> mockRepository;
+        private static IMapper _mapper;
 
         public RamControllerUnitTests()
         {
-            controller = new RamMetricsController();
+            mockRepository = new Mock<IRamMetricsRepository>();
+            mockLogger = new Mock<ILogger<RamMetricsController>>();
+
+            if (_mapper == null)
+            {
+                var mappingConfig = new MapperConfiguration(mc =>
+                {
+                    mc.AddProfile(new MapperProfile());
+                });
+                IMapper mapper = mappingConfig.CreateMapper();
+                _mapper = mapper;
+            }
+            controller = new RamMetricsController(mockLogger.Object, mockRepository.Object, _mapper);
         }
 
         [Fact]

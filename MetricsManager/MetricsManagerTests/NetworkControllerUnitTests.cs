@@ -1,18 +1,37 @@
-using MetricsManager.Controllers;
-using MetricsManager.Enum;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using Xunit;
+using Moq;
+using Microsoft.Extensions.Logging;
+using MetricsManager.Controllers.NetworkMetricsController;
+using AutoMapper;
+using MetricsManager.DAL.Interfaces;
+using MetricsManager;
 
 namespace MetricsManagerTests
 {
     public class NetworkControllerUnitTests
     {
-        private NetworkMetricsController controller;
+        private readonly NetworkMetricsController controller;
+        private readonly Mock<ILogger<NetworkMetricsController>> mockLogger;
+        private readonly Mock<INetworkMetricsRepository> mockRepository;
+        private static IMapper _mapper;
 
         public NetworkControllerUnitTests()
         {
-            controller = new NetworkMetricsController();
+            mockRepository = new Mock<INetworkMetricsRepository>();
+            mockLogger = new Mock<ILogger<NetworkMetricsController>>();
+
+            if (_mapper == null)
+            {
+                var mappingConfig = new MapperConfiguration(mc =>
+                {
+                    mc.AddProfile(new MapperProfile());
+                });
+                IMapper mapper = mappingConfig.CreateMapper();
+                _mapper = mapper;
+            }
+            controller = new NetworkMetricsController(mockLogger.Object, mockRepository.Object, _mapper);
         }
 
         [Fact]
