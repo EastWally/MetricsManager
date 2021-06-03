@@ -1,18 +1,37 @@
-using MetricsManager.Controllers;
-using MetricsManager.Enum;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using Xunit;
+using Moq;
+using Microsoft.Extensions.Logging;
+using MetricsManager.Controllers.HddMetricsController;
+using AutoMapper;
+using MetricsManager.DAL.Interfaces;
+using MetricsManager;
 
 namespace MetricsManagerTests
 {
     public class HddControllerUnitTests
     {
-        private HddMetricsController controller;
+        private readonly HddMetricsController controller;
+        private readonly Mock<ILogger<HddMetricsController>> mockLogger;
+        private readonly Mock<IHddMetricsRepository> mockRepository;
+        private static IMapper _mapper;
 
         public HddControllerUnitTests()
         {
-            controller = new HddMetricsController();
+            mockRepository = new Mock<IHddMetricsRepository>();
+            mockLogger = new Mock<ILogger<HddMetricsController>>();
+
+            if (_mapper == null)
+            {
+                var mappingConfig = new MapperConfiguration(mc =>
+                {
+                    mc.AddProfile(new MapperProfile());
+                });
+                IMapper mapper = mappingConfig.CreateMapper();
+                _mapper = mapper;
+            }
+            controller = new HddMetricsController(mockLogger.Object, mockRepository.Object, _mapper);
         }
 
         [Fact]

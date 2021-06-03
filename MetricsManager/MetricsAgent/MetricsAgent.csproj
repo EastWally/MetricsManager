@@ -19,12 +19,8 @@
     <PackageReference Include="System.Data.SQLite.Core" Version="1.0.113.7" />
     <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="5.0.1" />
   </ItemGroup>
-
   <ItemGroup>
-    <Reference Include="System.Diagnostics.PerformanceCounter">
-      <HintPath>C:\Program Files (x86)\dotnet\shared\Microsoft.WindowsDesktop.App\5.0.2\System.Diagnostics.PerformanceCounter.dll</HintPath>
-    </Reference>
+    <Content Update="nlog.config" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
-
 
 </Project>

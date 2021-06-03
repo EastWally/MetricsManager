@@ -15,9 +15,9 @@ namespace MetricsAgentTests
 {
     public class CpuControllerUnitTests
     {
-        private CpuMetricsController controller;
-        private Mock<ILogger<CpuMetricsController>> mockLogger;
-        private Mock<ICpuMetricsRepository> mockRepository;
+        private readonly CpuMetricsController controller;
+        private readonly Mock<ILogger<CpuMetricsController>> mockLogger;
+        private readonly Mock<ICpuMetricsRepository> mockRepository;
         private static IMapper _mapper;
 
         public CpuControllerUnitTests()
