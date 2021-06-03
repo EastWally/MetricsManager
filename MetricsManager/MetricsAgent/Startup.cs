@@ -12,6 +12,10 @@ using Quartz.Spi;
 using Quartz;
 using Quartz.Impl;
 using MetricsAgent.Jobs;
+using Microsoft.OpenApi.Models;
+using System;
+using System.Reflection;
+using System.IO;
 
 namespace MetricsAgent
 {
@@ -57,6 +61,31 @@ namespace MetricsAgent
             services.AddSingleton(new JobSchedule(jobType: typeof(RamMetricJob), cronExpression: "0/5 * * * * ?"));
 
             services.AddHostedService<QuartzHostedService>();
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Version = "v1",
+                    Title = "API сервиса агента сбора метрик",
+                    Description = "Документации api сервиса",
+                    TermsOfService = new Uri("https://example.com/terms"),
+                    Contact = new OpenApiContact
+                    {
+                        Name = "Yeti",
+                        Email = string.Empty,
+                    },
+                    License = new OpenApiLicense
+                    {
+                        Name = "OpenApiLicense",
+                        Url = new Uri("https://example.com/license"),
+                    }
+                });
+                // Указываем файл из которого брать комментарии для Swagger UI
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
+            });
         }
 
         private void ConfigureFuentMigratior(IServiceCollection services, IDBConfig dBConfig)
@@ -84,6 +113,14 @@ namespace MetricsAgent
             });
 
             migrationRunner.MigrateUp();
+
+            // Включение middleware в пайплайн для обработки Swagger запросов.
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "API сервиса агента сбора метрик");
+                c.RoutePrefix = string.Empty;
+            });
         }
     }
 }

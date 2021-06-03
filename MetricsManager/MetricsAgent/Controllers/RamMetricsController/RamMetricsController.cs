@@ -25,6 +25,19 @@ namespace MetricsAgent.Controllers.RamMetricsController
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// Получает метрики RAM в заданном интервале времени
+        /// </summary>
+        /// <remarks>
+        /// Пример запроса:
+        ///
+        ///     GET api/metrics/ram/available/from/2020-01-01/to/2022-01-01
+        ///
+        /// </remarks>
+        /// <param name="fromTime">Начальная метка времени</param>
+        /// <param name="toTime">Конечная метка времени</param>
+        /// <returns>Список метрик, которые были сохранены в заданном диапазоне времени</returns>
+        /// <response code="400">Переданы не правильные параметры</response>
         [HttpGet("available/from/{fromTime}/to/{toTime}")]
         public IActionResult GetAvailableSpace([FromRoute] DateTimeOffset fromTime, [FromRoute] DateTimeOffset toTime)
         {
@@ -40,6 +53,18 @@ namespace MetricsAgent.Controllers.RamMetricsController
             return Ok(response);
         }
 
+        /// <summary>
+        /// Записывает метрику RAM
+        /// </summary>
+        /// <remarks>
+        /// Пример запроса:
+        ///
+        ///     POST api/metrics/ram/create
+        ///
+        /// </remarks>
+        /// <param name="request">Метрика</param>
+        /// <returns></returns>
+        /// <response code="400">Переданы не правильные параметры</response>
         [HttpPost("create")]
         public IActionResult Create([FromBody] RamMetricCreateRequest request)
         {

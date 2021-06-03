@@ -1,0 +1,42 @@
+2021-06-03 11:25:06.2171 Info Message Template Auto Format enabled
+2021-06-03 11:25:06.2392 Info Loading assembly: NLog.Web.AspNetCore
+2021-06-03 11:25:06.3395 Info Adding target FileTarget(Name=allfile)
+2021-06-03 11:25:06.3557 Info Adding target FileTarget(Name=ownFile-web)
+2021-06-03 11:25:06.3557 Warn Skipping unrecognized property 'tolower=true` for ${level} (NLog.LayoutRenderers.LevelLayoutRenderer)
+2021-06-03 11:25:06.3557 Info Adding target ConsoleTarget(Name=lifetimeConsole)
+2021-06-03 11:25:06.4129 Info Validating config: TargetNames=allfile, lifetimeConsole, ownFile-web, ConfigItems=65, FilePath=E:\Geekbrains\MetricsManager\MetricsManager\MetricsManager\bin\Debug\netcoreapp3.1\nlog.config
+2021-06-03 11:25:47.2954 Info Message Template Auto Format enabled
+2021-06-03 11:25:47.4400 Info Loading assembly: NLog.Web.AspNetCore
+2021-06-03 11:25:47.6466 Info Adding target FileTarget(Name=allfile)
+2021-06-03 11:25:47.6955 Info Adding target FileTarget(Name=ownFile-web)
+2021-06-03 11:25:47.6955 Warn Skipping unrecognized property 'tolower=true` for ${level} (NLog.LayoutRenderers.LevelLayoutRenderer)
+2021-06-03 11:25:47.6955 Info Adding target ConsoleTarget(Name=lifetimeConsole)
+2021-06-03 11:25:47.7834 Info Validating config: TargetNames=allfile, lifetimeConsole, ownFile-web, ConfigItems=65, FilePath=E:\Geekbrains\MetricsManager\MetricsManager\MetricsManager\bin\Debug\netcoreapp3.1\nlog.config
+2021-06-03 11:26:22.6724 Info Message Template Auto Format enabled
+2021-06-03 11:26:22.7293 Info Loading assembly: NLog.Web.AspNetCore
+2021-06-03 11:26:22.9705 Info Adding target FileTarget(Name=allfile)
+2021-06-03 11:26:22.9903 Info Adding target FileTarget(Name=ownFile-web)
+2021-06-03 11:26:22.9903 Warn Skipping unrecognized property 'tolower=true` for ${level} (NLog.LayoutRenderers.LevelLayoutRenderer)
+2021-06-03 11:26:22.9903 Info Adding target ConsoleTarget(Name=lifetimeConsole)
+2021-06-03 11:26:23.0767 Info Validating config: TargetNames=allfile, lifetimeConsole, ownFile-web, ConfigItems=65, FilePath=E:\Geekbrains\MetricsManager\MetricsManager\MetricsManager\bin\Debug\netcoreapp3.1\nlog.config
+2021-06-03 11:27:01.5199 Info Message Template Auto Format enabled
+2021-06-03 11:27:01.6251 Info Loading assembly: NLog.Web.AspNetCore
+2021-06-03 11:27:01.8742 Info Adding target FileTarget(Name=allfile)
+2021-06-03 11:27:01.9050 Info Adding target FileTarget(Name=ownFile-web)
+2021-06-03 11:27:01.9133 Warn Skipping unrecognized property 'tolower=true` for ${level} (NLog.LayoutRenderers.LevelLayoutRenderer)
+2021-06-03 11:27:01.9133 Info Adding target ConsoleTarget(Name=lifetimeConsole)
+2021-06-03 11:27:02.0564 Info Validating config: TargetNames=allfile, lifetimeConsole, ownFile-web, ConfigItems=65, FilePath=E:\Geekbrains\MetricsManager\MetricsManager\MetricsManager\bin\Debug\netcoreapp3.1\nlog.config
+2021-06-03 11:27:45.2423 Info Message Template Auto Format enabled
+2021-06-03 11:27:45.3632 Info Loading assembly: NLog.Web.AspNetCore
+2021-06-03 11:27:45.5040 Info Adding target FileTarget(Name=allfile)
+2021-06-03 11:27:45.5127 Info Adding target FileTarget(Name=ownFile-web)
+2021-06-03 11:27:45.5127 Warn Skipping unrecognized property 'tolower=true` for ${level} (NLog.LayoutRenderers.LevelLayoutRenderer)
+2021-06-03 11:27:45.5127 Info Adding target ConsoleTarget(Name=lifetimeConsole)
+2021-06-03 11:27:45.5622 Info Validating config: TargetNames=allfile, lifetimeConsole, ownFile-web, ConfigItems=65, FilePath=E:\Geekbrains\MetricsManager\MetricsManager\MetricsManager\bin\Debug\netcoreapp3.1\nlog.config
+2021-06-03 11:36:19.4389 Info Message Template Auto Format enabled
+2021-06-03 11:36:19.5509 Info Loading assembly: NLog.Web.AspNetCore
+2021-06-03 11:36:19.7063 Info Adding target FileTarget(Name=allfile)
+2021-06-03 11:36:19.7193 Info Adding target FileTarget(Name=ownFile-web)
+2021-06-03 11:36:19.7193 Warn Skipping unrecognized property 'tolower=true` for ${level} (NLog.LayoutRenderers.LevelLayoutRenderer)
+2021-06-03 11:36:19.7268 Info Adding target ConsoleTarget(Name=lifetimeConsole)
+2021-06-03 11:36:19.7895 Info Validating config: TargetNames=allfile, lifetimeConsole, ownFile-web, ConfigItems=65, FilePath=E:\Geekbrains\MetricsManager\MetricsManager\MetricsManager\bin\Debug\netcoreapp3.1\nlog.config

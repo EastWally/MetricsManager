@@ -25,6 +25,20 @@ namespace MetricsManager.Controllers.RamMetricsController
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// Получает метрики RAM от заданного агента в заданном интервале времени
+        /// </summary>
+        /// <remarks>
+        /// Пример запроса:
+        ///
+        ///     GET api/metrics/ram/agent/1/from/2020-01-01/to/2022-01-01
+        ///
+        /// </remarks>
+        /// <param name="agentId">Идентификатор агента</param>
+        /// <param name="fromTime">Начальная метка времени</param>
+        /// <param name="toTime">Конечная метка времени</param>
+        /// <returns>Список метрик, которые были сохранены в заданном диапазоне времени</returns>
+        /// <response code="400">Переданы не правильные параметры</response>
         [HttpGet("agent/{agentId}/from/{fromTime}/to/{toTime}")]
         public IActionResult GetMetricsFromAgent([FromRoute] int agentId, [FromRoute] DateTimeOffset fromTime, [FromRoute] DateTimeOffset toTime)
         {
@@ -39,6 +53,19 @@ namespace MetricsManager.Controllers.RamMetricsController
             return Ok(response);
         }
 
+        /// <summary>
+        /// Получает метрики Ram от всех агентов в заданном интервале времени
+        /// </summary>
+        /// <remarks>
+        /// Пример запроса:
+        ///
+        ///     GET api/metrics/ram/cluster/from/2020-01-01/to/2022-01-01
+        ///
+        /// </remarks>
+        /// <param name="fromTime">Начальная метка времени</param>
+        /// <param name="toTime">Конечная метка времени</param>
+        /// <returns>Список метрик, которые были сохранены в заданном диапазоне времени</returns>
+        /// <response code="400">Переданы не правильные параметры</response>
         [HttpGet("cluster/from/{fromTime}/to/{toTime}")]
         public IActionResult GetMetricsAllCluster([FromRoute] DateTimeOffset fromTime, [FromRoute] DateTimeOffset toTime)
         {
