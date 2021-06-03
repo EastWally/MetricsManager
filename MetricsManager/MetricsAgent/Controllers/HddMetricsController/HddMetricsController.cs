@@ -26,6 +26,19 @@ namespace MetricsAgent.Controllers.HddMetricsController
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// Получает метрики Hdd в заданном интервале времени
+        /// </summary>
+        /// <remarks>
+        /// Пример запроса:
+        ///
+        ///     GET api/metrics/hdd/left/from/2020-01-01/to/2022-01-01
+        ///
+        /// </remarks>
+        /// <param name="fromTime">Начальная метка времени</param>
+        /// <param name="toTime">Конечная метка времени</param>
+        /// <returns>Список метрик, которые были сохранены в заданном диапазоне времени</returns>
+        /// <response code="400">Переданы не правильные параметры</response>
         [HttpGet("left/from/{fromTime}/to/{toTime}")]
         public IActionResult GetLeftSpace([FromRoute] DateTimeOffset fromTime, [FromRoute] DateTimeOffset toTime)
         {
@@ -41,6 +54,18 @@ namespace MetricsAgent.Controllers.HddMetricsController
             return Ok(response);
         }
 
+        /// <summary>
+        /// Записывает метрику Hdd
+        /// </summary>
+        /// <remarks>
+        /// Пример запроса:
+        ///
+        ///     POST api/metrics/hdd/create
+        ///
+        /// </remarks>
+        /// <param name="request">Метрика</param>
+        /// <returns></returns>
+        /// <response code="400">Переданы не правильные параметры</response>
         [HttpPost("create")]
         public IActionResult Create([FromBody] HddMetricCreateRequest request)
         {

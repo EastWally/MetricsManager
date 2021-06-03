@@ -26,6 +26,18 @@ namespace MetricsManager.Controllers.AgentsController
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// Регистрирует агента в менеджере
+        /// </summary>
+        /// <remarks>
+        /// Пример запроса:
+        ///
+        ///     POST api/agents/register
+        ///
+        /// </remarks>
+        /// <param name="agentInfo">Описание агента</param>
+        /// <returns></returns>
+        /// <response code="400">Переданы не правильные параметры</response>
         [HttpPost("register")]
         public IActionResult RegisterAgent([FromBody] RegisterAgentRequest agentInfo)
         {
@@ -35,6 +47,18 @@ namespace MetricsManager.Controllers.AgentsController
             return Ok();
         }
 
+        /// <summary>
+        /// Включает запись метрик от агента в менеджере по идентификатору
+        /// </summary>
+        /// <remarks>
+        /// Пример запроса:
+        ///
+        ///     PUT api/agents/enable/1
+        ///
+        /// </remarks>
+        /// <param name="agentId">Идентификатор агента</param>
+        /// <returns></returns>
+        /// <response code="400">Переданы не правильные параметры</response>
         [HttpPut("enable/{agentId}")]
         public IActionResult EnableAgentById([FromRoute] int agentId)
         {
@@ -43,6 +67,18 @@ namespace MetricsManager.Controllers.AgentsController
             return Ok();
         }
 
+        /// <summary>
+        /// Выключает запись метрик от агента в менеджере по идентификатору
+        /// </summary>
+        /// <remarks>
+        /// Пример запроса:
+        ///
+        ///     PUT api/agents/disable/1
+        ///
+        /// </remarks>
+        /// <param name="agentId">Идентификатор агента</param>
+        /// <returns></returns>
+        /// <response code="400">Переданы не правильные параметры</response>
         [HttpPut("disable/{agentId}")]
         public IActionResult DisableAgentById([FromRoute] int agentId)
         {
@@ -51,6 +87,17 @@ namespace MetricsManager.Controllers.AgentsController
             return Ok();
         }
 
+        /// <summary>
+        /// Получает зарегистрированных агентов
+        /// </summary>
+        /// <remarks>
+        /// Пример запроса:
+        ///
+        ///     GET api/agents/get
+        ///
+        /// </remarks>
+        /// <returns>Список зарегистрированных агентов</returns>
+        /// <response code="400">Переданы не правильные параметры</response>
         [HttpGet("get")]
         public IActionResult GetRegisteredAgents()
         {
