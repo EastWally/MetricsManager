@@ -14,6 +14,11 @@ using System.Data.SQLite;
 using MetricsAgent.DAL.Interfaces;
 using MetricsAgent.DAL.Repositories;
 using AutoMapper;
+using FluentMigrator.Runner;
+using Quartz.Spi;
+using Quartz;
+using Quartz.Impl;
+using MetricsAgent.Jobs;
 
 namespace MetricsAgent
 {
@@ -35,7 +40,7 @@ namespace MetricsAgent
             var mapper = mapperConfiguration.CreateMapper();
             services.AddSingleton(mapper);
 
-            ConfigureSqlLiteConnection(services, new DBConfig());
+            ConfigureFuentMigratior(services, new DBConfig());
             services.AddSingleton<IDBConfig, DBConfig>();
 
             services.AddSingleton<ICpuMetricsRepository, CpuMetricsRepository>();
@@ -43,47 +48,34 @@ namespace MetricsAgent
             services.AddSingleton<IHddMetricsRepository, HddMetricsRepository>();
             services.AddSingleton<INetworkMetricsRepository, NetworkMetricsRepository>();
             services.AddSingleton<IRamMetricsRepository, RamMetricsRepository>();
+
+            services.AddSingleton<IJobFactory, SingletonJobFactory>();
+            services.AddSingleton<ISchedulerFactory, StdSchedulerFactory>();
+            
+            services.AddSingleton<CpuMetricJob>();
+            services.AddSingleton<DotNetMetricJob>();
+            services.AddSingleton<HddMetricJob>();
+            services.AddSingleton<NetworkMetricJob>();
+            services.AddSingleton<RamMetricJob>();
+            services.AddSingleton(new JobSchedule(jobType: typeof(CpuMetricJob), cronExpression: "0/5 * * * * ?")); 
+            services.AddSingleton(new JobSchedule(jobType: typeof(DotNetMetricJob), cronExpression: "0/5 * * * * ?"));
+            services.AddSingleton(new JobSchedule(jobType: typeof(HddMetricJob), cronExpression: "0/5 * * * * ?"));
+            services.AddSingleton(new JobSchedule(jobType: typeof(NetworkMetricJob), cronExpression: "0/5 * * * * ?"));
+            services.AddSingleton(new JobSchedule(jobType: typeof(RamMetricJob), cronExpression: "0/5 * * * * ?"));
+
+            services.AddHostedService<QuartzHostedService>();
         }
 
-        private void ConfigureSqlLiteConnection(IServiceCollection services, IDBConfig dBConfig)
+        private void ConfigureFuentMigratior(IServiceCollection services, IDBConfig dBConfig)
         {
             string connectionString = dBConfig.ConnectionString;
             var connection = new SQLiteConnection(connectionString);
-            connection.Open();
-            PrepareSchema(connection);
-        }
-
-        private void PrepareSchema(SQLiteConnection connection)
-        {
-            using (var command = new SQLiteCommand(connection))
-            {
-                CreateTable(command, "cpumetrics", 10);
-                CreateTable(command, "dotnetmetrics", 20);
-                CreateTable(command, "hddmetrics", 30);
-                CreateTable(command, "networkmetrics", 40);
-                CreateTable(command, "rammetrics", 50);
-            }
-        }
-
-        private void CreateTable(SQLiteCommand command, string tableName, int value)
-        {
-            command.CommandText = $"DROP TABLE IF EXISTS {tableName}";
-            command.ExecuteNonQuery();
-
-            command.CommandText = $"CREATE TABLE {tableName}(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, value INT, time INT)";
-            command.ExecuteNonQuery();
-
-            command.CommandText = $"INSERT INTO {tableName}(value, time) VALUES({value++},{DateTimeOffset.Now.AddDays(-3).ToUnixTimeSeconds()})";
-            command.ExecuteNonQuery();
-            command.CommandText = $"INSERT INTO {tableName}(value, time) VALUES({value++},{DateTimeOffset.Now.AddDays(-2).ToUnixTimeSeconds()})";
-            command.ExecuteNonQuery();
-            command.CommandText = $"INSERT INTO {tableName}(value, time) VALUES({value},{DateTimeOffset.Now.AddDays(-1).ToUnixTimeSeconds()})";
-            command.ExecuteNonQuery();
+            services.AddFluentMigratorCore().ConfigureRunner(rb => rb.AddSQLite().WithGlobalConnectionString(connectionString).ScanIn(typeof(Startup).Assembly).For.Migrations()).AddLogging(lb => lb.AddFluentMigratorConsole());
         }
 
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IMigrationRunner migrationRunner)
         {
             if (env.IsDevelopment())
             {
@@ -98,6 +90,8 @@ namespace MetricsAgent
             {
                 endpoints.MapControllers();
             });
+
+            migrationRunner.MigrateUp();
         }
     }
 }

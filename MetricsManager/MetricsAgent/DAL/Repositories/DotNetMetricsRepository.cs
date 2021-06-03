@@ -8,19 +8,19 @@ using System.Linq;
 
 namespace MetricsAgent.DAL.Repositories
 {
-    public class CpuMetricsRepository : ICpuMetricsRepository
+    public class DotNetMetricsRepository : IDotNetMetricsRepository
     {
         private readonly string _connectionString;
 
-        public CpuMetricsRepository(IDBConfig dBConfig)
+        public DotNetMetricsRepository(IDBConfig dBConfig)
         {
             _connectionString = dBConfig.ConnectionString;
         }
 
-        public void Create(CpuMetric item)
+        public void Create(DotNetMetric item)
         {
             using var connection = new SQLiteConnection(_connectionString);
-            connection.Execute("INSERT INTO cpumetrics(value, time) VALUES(@value, @time)",
+            connection.Execute("INSERT INTO dotnetmetrics(value, time) VALUES(@value, @time)",
                 new
                 {
                     value = item.Value,
@@ -28,10 +28,10 @@ namespace MetricsAgent.DAL.Repositories
                 });
         }
 
-        public IList<CpuMetric> GetByPeriod(PeriodArgs args)
+        public IList<DotNetMetric> GetByPeriod(PeriodArgs args)
         {
             using var connection = new SQLiteConnection(_connectionString);
-            return connection.Query<CpuMetric>("SELECT * FROM cpumetrics WHERE time BETWEEN @fromTime AND @toTime",
+            return connection.Query<DotNetMetric>("SELECT * FROM dotnetmetrics WHERE time BETWEEN @fromTime AND @toTime",
                 new
                 {
                     fromTime = args.FromTime.ToUnixTimeSeconds(),
